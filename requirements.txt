@@ -1,18 +1,16 @@
-streamlit>=1.25
-earthengine-api>=0.1.341
-folium>=0.14
-geemap>=0.30
-matplotlib>=3.7
-numpy==1.23.5         # Compatible with TensorFlow
-pandas>=2.0
-plotly>=5.17
-psycopg2-binary>=2.9
-scipy>=1.11
-sqlalchemy>=2.0
-streamlit-folium>=0.14
-trafilatura>=1.4
-anthropic>=0.4
-requests_mock             # Required by conda-repo-cli
-urllib3<2.1               # Compatible with botocore
-clyent==1.2.1             # Exact version for conda-repo-cli
-python-dateutil==2.8.2    # Match conda-repo-cli requirement
+streamlit==1.25.0
+earthengine-api==0.1.341
+folium==0.14.0
+geemap==0.30.0
+matplotlib==3.7.0
+numpy==1.23.5
+pandas==2.0.0
+plotly==5.17.0
+psycopg2-binary==2.9.0
+scipy==1.11.0
+sqlalchemy==2.0.0
+streamlit-folium==0.14.0
+trafilatura==1.4.0
+anthropic==0.4.0
+python-dateutil==2.8.2
+urllib3<2.1.0
