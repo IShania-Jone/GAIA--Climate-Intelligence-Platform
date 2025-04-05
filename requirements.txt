@@ -1,5 +1,5 @@
 streamlit==1.25.0
-earthengine-api==0.1.341
+earthengine-api==0.1.385
 folium==0.14.0
 geemap==0.30.0
 matplotlib==3.7.0
@@ -11,6 +11,6 @@ scipy==1.11.0
 sqlalchemy==2.0.0
 streamlit-folium==0.14.0
 trafilatura==1.4.0
-anthropic==0.4.0
+anthropic==0.49.0
 python-dateutil==2.8.2
 urllib3<2.1.0

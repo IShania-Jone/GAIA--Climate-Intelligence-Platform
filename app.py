@@ -255,13 +255,28 @@ with st.sidebar:
     
     # User preferences section
     st.subheader("🔧 Preferences")
-    dark_mode = st.toggle("Dark Mode", value=st.session_state.dark_mode)
+    # Set default session state if not already set
+if "dark_mode" not in st.session_state:
+    st.session_state.dark_mode = False
+
+# Use checkbox instead of toggle
+dark_mode = st.checkbox("Dark Mode", value=st.session_state.dark_mode)
+
+# Update session state
+st.session_state.dark_mode = dark_mode
+
+# Example usage
+if st.session_state.dark_mode:
+    st.write("🌙 Dark Mode is enabled!")
+else:
+    st.write("☀️ Light Mode is enabled!")
     if dark_mode != st.session_state.dark_mode:
         st.session_state.dark_mode = dark_mode
         st.rerun()
     
-    high_resolution = st.toggle("High Resolution Maps", value=True)
-    realtime_data = st.toggle("Real-time Data Updates", value=True)
+    high_resolution = st.checkbox("High Resolution Maps", value=True)
+    realtime_data = st.checkbox("Real-time Data Updates", value=True)
+
     
     # Google Cloud Integration Status
     st.divider()
