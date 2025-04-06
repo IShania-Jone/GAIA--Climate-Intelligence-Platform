@@ -1,0 +1,17 @@
+[server]
+headless = true
+enableCORS = false
+enableXsrfProtection = false
+address = "localhost"
+port = 2000
+
+[theme]
+primaryColor = "#00a3e0"
+backgroundColor = "#f0f2f6"
+secondaryBackgroundColor = "#ffffff"
+textColor = "#262730"
+font = "sans serif"
+
+[mapbox]
+# Optional: Add your Mapbox token if you use Streamlit’s map components
+token = ""
