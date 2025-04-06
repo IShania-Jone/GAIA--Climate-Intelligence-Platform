@@ -12,7 +12,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta,timezone
 import folium
 from streamlit_folium import folium_static
 import random
@@ -63,7 +63,7 @@ def generate_alerts(types, regions, severities, time_range):
     """
     alerts = []
     
-    current_time = datetime.now()
+    current_time = datetime.now(timezone.utc)
     
     # Define time ranges in hours
     time_ranges = {
@@ -296,7 +296,7 @@ with col2:
         if alerts:
             center_lat, center_lon = alerts[0]["coordinates"]
         
-        m = folium.Map(location=[center_lat, center_lon], zoom_start=2, tiles="CartoDB positron")
+        m = folium.Map(location=[center_lat, center_lon], zoom_start=2, tiles="CartoDB Positron")
         
         # Add markers for each alert
         for alert in alerts:
@@ -322,7 +322,7 @@ with col2:
                 <p><strong>Time:</strong> {alert['time']}</p>
             </div>
             """
-            
+            color="green"
             # Add marker
             folium.Marker(
                 location=[lat, lon],
@@ -496,7 +496,7 @@ st.subheader("Historical Alert Trends")
 
 # Create sample historical data
 months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-current_month = datetime.now().month
+current_month = datetime.now(timezone.utc).month
 
 # Generate sample historical data
 historical_data = []

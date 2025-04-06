@@ -50,7 +50,7 @@ class GlobalHeatmapGenerator:
             Folium map object with temperature heatmap layer
         """
         if not map_obj:
-            map_obj = folium.Map(location=[0, 0], zoom_start=2, tiles="CartoDB positron")
+            map_obj = folium.Map(location=[0, 0], zoom_start=2, tiles="CartoDB Positron")
             
         if not self.earth_engine_initialized:
             # If Earth Engine is not available, use database records
@@ -159,7 +159,11 @@ class GlobalHeatmapGenerator:
             Folium map object with precipitation heatmap layer
         """
         if not map_obj:
-            map_obj = folium.Map(location=[0, 0], zoom_start=2, tiles="CartoDB positron")
+            map_obj = folium.Map(
+    location=[0, 0],
+    zoom_start=2,
+    tiles="CartoDB Positron"  # Capitalization matters!
+)
             
         if not self.earth_engine_initialized:
             # Add message when Earth Engine is not available
@@ -230,7 +234,11 @@ class GlobalHeatmapGenerator:
             Folium map object with extreme events markers
         """
         if not map_obj:
-            map_obj = folium.Map(location=[0, 0], zoom_start=2, tiles="CartoDB positron")
+            map_obj = folium.Map(
+    location=[0, 0],
+    zoom_start=2,
+    tiles="CartoDB Positron"  # Capital 'P'
+)
             
         try:
             # Get extreme events from database
@@ -337,7 +345,7 @@ class GlobalHeatmapGenerator:
                 return m
             else:
                 # Create a folium Map
-                m = folium.Map(location=[center_lat, center_lon], zoom_start=zoom, tiles="CartoDB positron")
+                m = folium.Map(    location=[center_lat, center_lon],    zoom_start=zoom,    tiles="CartoDB Positron")
                 
                 # Add temperature layer using database
                 self.get_temperature_heatmap(m)
@@ -354,7 +362,7 @@ class GlobalHeatmapGenerator:
             logger.error(f"Error generating combined climate map: {str(e)}")
             
             # Return a basic map with error message
-            m = folium.Map(location=[center_lat, center_lon], zoom_start=zoom, tiles="CartoDB positron")
+            m = folium.Map(location=[center_lat, center_lon], zoom_start=zoom, tiles="CartoDB Positron")
             
             title_html = f'<h3 style="text-align:center;">Error generating climate map: {str(e)}</h3>'
             m.get_root().html.add_child(folium.Element(title_html))

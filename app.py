@@ -320,7 +320,7 @@ else:
         with st.spinner("Refreshing global climate data..."):
             time.sleep(1)  # Simulate data refresh
             st.session_state.last_refresh = datetime.now()
-            st.rerun()
+            st.experimental_rerun()
 
 # Main content area
 # Modern header with animation

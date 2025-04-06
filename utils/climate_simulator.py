@@ -242,10 +242,32 @@ def run_advanced_climate_simulation(scenario, years=80, params=None):
             annual_increase = scenario_details['annual_increase']
         
         # Add carbon cycle feedback (higher temperatures release more CO2)
-        if i > 0:
-            temp_anomaly = y[i-1, 0] - params['initial_temperature']
-            feedback_co2 = temp_anomaly * params['carbon_cycle_feedback']
-            annual_increase += feedback_co2
+        def climate_system(y, t, co2_levels, params):
+             T_s = y[0]  # Surface temperature
+             T_d = y[1]  # Deep ocean temperature
+
+             try:
+                 idx = int(np.floor(t))
+                 if idx >= len(co2_levels):
+                     co2 = co2_levels[-1]
+                 elif idx < 0:
+                     co2 = co2_levels[0]
+                 else:
+                     co2 = co2_levels[idx]
+             except:
+                 co2 = co2_levels[0]
+
+             # Radiative forcing due to CO2
+             forcing = params['co2_forcing_coefficient'] * np.log(co2 / params['baseline_co2'])
+
+             # Temperature tendency equations
+             dT_s = (forcing - (T_s - T_d) / params['ocean_heat_capacity']) \
+           - params['ice_albedo_feedback'] * max(0, T_s - params['initial_temperature'])
+
+             dT_d = (T_s - T_d) * params['ocean_mixing_rate']
+
+             return [dT_s, dT_d]
+
         
         # Update CO2 level
         co2 = co2_levels[-1] + annual_increase

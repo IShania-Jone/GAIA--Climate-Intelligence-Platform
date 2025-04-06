@@ -6,7 +6,7 @@ import streamlit as st
 import ee
 import os
 from utils.earth_engine import initialize_earth_engine
-
+import streamlit as st
 # Page config
 st.set_page_config(
     page_title="GAIA-∞ | Settings",
@@ -209,13 +209,19 @@ with tabs[1]:  # Maps & Visualization Settings
 with tabs[2]: #Performance settings from original code.
     st.header("Performance Settings")
     st.subheader("Data Caching")
-    cache_enabled = st.toggle(
-        "Enable Data Caching",
-        value=st.session_state.get('cache_enabled', True),
-        help="Improve performance by caching data"
-    )
+    if "cache_enabled" not in st.session_state:
+        st.session_state.cache_enabled = True
 
-    cache_duration = st.slider(
+st.session_state.cache_enabled = st.checkbox(
+    "Enable Data Caching",
+    value=st.session_state.cache_enabled,
+    help="Improve performance by caching data"
+)
+
+cache_enabled = st.session_state.cache_enabled
+
+
+cache_duration = st.slider(
         "Cache Duration (hours)",
         min_value=1,
         max_value=48,
@@ -223,20 +229,34 @@ with tabs[2]: #Performance settings from original code.
         help="How long to keep cached data"
     )
 
-    st.subheader("Animation Settings")
-    animations_enabled = st.toggle(
-        "Enable Animations",
-        value=st.session_state.get('animations_enabled', True),
-        help="Disable for better performance on slower devices"
-    )
+import streamlit as st
 
-    st.subheader("Auto-Refresh Data")
-    auto_refresh = st.toggle(
-        "Auto-Refresh Climate Data",
-        value=st.session_state.get('auto_refresh', False)
-    )
+# Set default session state values
+if 'animations_enabled' not in st.session_state:
+    st.session_state['animations_enabled'] = True
 
-    if auto_refresh:
+if 'auto_refresh' not in st.session_state:
+    st.session_state['auto_refresh'] = False
+
+# Animation settings
+st.subheader("Animation Settings")
+animations_enabled = st.checkbox(
+    "Enable Animations",
+    value=st.session_state['animations_enabled'],
+    help="Disable for better performance on slower devices"
+)
+st.session_state['animations_enabled'] = animations_enabled
+
+# Auto-refresh settings
+st.subheader("Auto-Refresh Data")
+auto_refresh = st.checkbox(
+    "Auto-Refresh Climate Data",
+    value=st.session_state['auto_refresh']
+)
+st.session_state['auto_refresh'] = auto_refresh
+
+
+if auto_refresh:
         refresh_interval = st.slider(
             "Refresh Interval (minutes)",
             min_value=5,
@@ -244,7 +264,7 @@ with tabs[2]: #Performance settings from original code.
             value=st.session_state.get('refresh_interval', 30)
         )
 
-    if st.button("Save Performance Settings"):
+if st.button("Save Performance Settings"):
         st.session_state.cache_enabled = cache_enabled
         st.session_state.cache_duration = cache_duration
         st.session_state.animations_enabled = animations_enabled

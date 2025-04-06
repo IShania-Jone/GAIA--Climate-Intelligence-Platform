@@ -5,6 +5,7 @@ import streamlit as st
 import folium
 from folium import plugins
 import geemap.foliumap as geemap
+from datetime import datetime, timedelta,timezone
 
 def initialize_earth_engine():
     """
@@ -17,7 +18,8 @@ def initialize_earth_engine():
         
     try:
         # Try to initialize Earth Engine (works if already authenticated)
-        ee.Initialize()
+        ee.Authenticate()
+        ee.Initialize(project='gaia-455911')
         st.session_state.ee_initialized = True
         return True
     except Exception as e:
@@ -116,9 +118,19 @@ def add_default_basemaps(m):
     """
     try:
         # Add MODIS land surface temperature
-        lst = ee.ImageCollection('MODIS/006/MOD11A1').filter(
-            ee.Filter.date(ee.Date.now().advance(-1, 'month'), ee.Date.now())
-        ).select('LST_Day_1km').mean()
+        ee.Authenticate()
+        ee.Initialize(project='gaia-455911')
+        end = datetime.now(timezone.utc)
+        start = end - timedelta(days=30)  
+        ee_start = ee.Date(start.isoformat() + 'Z')
+        ee_end = ee.Date(end.isoformat() + 'Z')
+        lst = (
+            ee.ImageCollection('MODIS/006/MOD11A1')
+            .filter(ee.Filter.date(ee_start, ee_end))
+            .select('LST_Day_1km')
+            .mean()
+        )
+
         
         # Scale to Celsius
         lst = lst.multiply(0.02).subtract(273.15)
@@ -135,9 +147,15 @@ def add_default_basemaps(m):
         )
         
         # Add MODIS vegetation indices
-        ndvi = ee.ImageCollection('MODIS/006/MOD13A2').filter(
-            ee.Filter.date(ee.Date.now().advance(-2, 'month'), ee.Date.now())
-        ).select('NDVI').mean()
+        ee.Initialize(project='gaia-455911')
+        now = datetime.now(timezone.utc)
+        two_months_ago = now - timedelta(days=60)  # Approximate 2 months
+        start = ee.Date(two_months_ago.isoformat())
+        end = ee.Date(now.isoformat())
+        ndvi = ee.ImageCollection('MODIS/006/MOD13A2') \
+           .filter(ee.Filter.date(start, end)) \
+           .select('NDVI') \
+            .mean()
         
         m.add_layer(
             ndvi,
@@ -150,10 +168,21 @@ def add_default_basemaps(m):
         )
         
         # Add precipitation data
-        precipitation = ee.ImageCollection('NASA/GPM_L3/IMERG_V06').filter(
-            ee.Filter.date(ee.Date.now().advance(-1, 'week'), ee.Date.now())
-        ).select('precipitationCal').mean()
-        
+        ee.Authenticate()
+        ee.Initialize(project='gaia-455911')
+
+
+        end = datetime.now(timezone.utc)
+        start = end - timedelta(weeks=1)
+        ee_start = ee.Date(start.isoformat() + 'Z')
+        ee_end = ee.Date(end.isoformat() + 'Z')
+        date_filter = ee.Filter.date(ee_start, ee_end)
+        precipitation = (
+            ee.ImageCollection('NASA/GPM_L3/IMERG_V06')
+            .filter(date_filter)
+            .select('precipitationCal')
+            .mean()
+        )
         m.add_layer(
             precipitation,
             {
@@ -165,9 +194,16 @@ def add_default_basemaps(m):
         )
         
         # Add sea surface temperature
-        sst = ee.ImageCollection('NASA/OCEANDATA/MODIS-Terra/L3SMI').filter(
-            ee.Filter.date(ee.Date.now().advance(-1, 'month'), ee.Date.now())
-        ).select('sst').mean()
+        ee.Initialize(project='gaia-455911')
+
+        now = datetime.now(timezone.utc)
+        one_month_ago = now - timedelta(days=30)  # Approximate 1 month
+        start = ee.Date(one_month_ago.isoformat())
+        end = ee.Date(now.isoformat())
+        sst = ee.ImageCollection('NASA/OCEANDATA/MODIS-Terra/L3SMI') \
+            .filter(ee.Filter.date(start, end)) \
+            .select('sst') \
+            .mean()
         
         m.add_layer(
             sst,
@@ -286,8 +322,13 @@ def add_dataset_to_map(m, dataset_id):
         collection = ee.ImageCollection(dataset["id"])
         
         # Filter to recent data
+        ee.Initialize(project='gaia-455911')
+        now = datetime.now(timezone.utc)
+        one_month_ago = now - timedelta(days=30)  
+        start = ee.Date(one_month_ago.isoformat())
+        end = ee.Date(now.isoformat())
         recent_data = collection.filter(
-            ee.Filter.date(ee.Date.now().advance(-1, 'month'), ee.Date.now())
+             ee.Filter.date(start, end)
         ).select(dataset["band"]).mean()
         
         # Add the layer to the map
